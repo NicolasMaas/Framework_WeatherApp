@@ -1,0 +1,11 @@
+$global-themeColor: hsl(195, 96%, 44%);
+$global-textColor: hsl(0, 0%, 100%);
+$global-backgroundColor: $global-themeColor;
+
+$cloud-color: #04a6db;
+$sunny-color: #0fcbff;
+$rain-color: #005ca3;
+
+:root {
+    --global-bg: hsl(195, 96%, 44%);
+}

@@ -1,0 +1,24 @@
+// 1. Settings
+@import './1-settings/colors.scss';
+
+// 2. Tools
+
+// 3. Generic
+@import './3-generic/reset.scss';
+
+// 4. Elements
+@import './4-elements/page.scss';
+@import './4-elements/headers.scss';
+
+// 5. Objects
+@import './5-objects/row.scss';
+@import './5-objects/container.scss';
+@import './5-objects/hide-accessible.scss';
+
+// 6. Components
+// @import './6-components/navigation.scss';
+
+// 7. Utilities
+@import './7-utilities/flex.scss';
+@import './7-utilities/text-align.scss';
+@import './7-utilities/max-width.scss';
