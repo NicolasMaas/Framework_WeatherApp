@@ -6,11 +6,11 @@
             <div class="c-weather">
                 <div class="c-weather--info">
                     <!-- Temperature -->
-                    <p class="c-weather__temp">18°</p>
+                    <p class="c-weather__temp">{{ Math.round(locationData.main.temp) }}°</p>
 
                     <!-- Location -->
                     <h1 class="c-weather__title">
-                        Belfast
+                        {{ locationData.name }}
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             class="c-weather__title--icon"
@@ -69,6 +69,7 @@
                     </button>
 
                     <!-- Submenu -->
+                    <section class="is-visible"></section>
                 </div>
             </div>
         </div>
@@ -82,11 +83,71 @@ export default {
         return {
             rainColor: "#005ca3",
             sunnyColor: "#0fcbff",
-            cloudColor: "#04a6db"
+            cloudColor: "#04a6db",
+
+            location: null,
+            gettingLocation: false,
+            errorStr: null,
+            gotLocation: false,
+            locationData: ""
         };
     },
 
+    created() {
+        //do we support geolocation
+        if (!("geolocation" in navigator)) {
+            this.errorStr = "Geolocation is not available.";
+            return;
+        }
+
+        this.gettingLocation = true;
+
+        // get position
+        navigator.geolocation.getCurrentPosition(
+            pos => {
+                this.gettingLocation = false;
+                this.location = pos;
+                this.gotLocation = true;
+
+                if (this.gotLocation === true) {
+                    this.getData();
+                }
+
+                console.log(this.location);
+            },
+            err => {
+                this.gettingLocation = false;
+                this.errorStr = err.message;
+            }
+        );
+    },
+
     methods: {
+        async getData() {
+            console.log("Lat: ", this.location.coords.latitude);
+            console.log("Lon: ", this.location.coords.longitude);
+
+            const lon = this.location.coords.longitude;
+            const lat = this.location.coords.latitude;
+
+            const response = await fetch(
+                `http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=e223a51a057a8a5cf039768938969d78&units=metric`
+            );
+
+            const json = await response.json();
+            this.locationData = json;
+
+            if (this.locationData.weather.main == "Clouds") {
+                changeBackground(this.cloudColor);
+            } else if (this.locationData.weather.main == "Sunny") {
+                changeBackground(this.sunnyColor);
+            } else if (this.locationData.weather.main == "Rain") {
+                changeBackground(this.rainColor);
+            }
+
+            console.log(JSON.stringify(json, null, 4));
+        },
+
         changeBackground(color) {
             document.documentElement.style.setProperty("--global-bg", color);
         }
@@ -98,15 +159,7 @@ export default {
 @import "@/assets/style/1-settings/colors.scss";
 @import "@/assets/style/6-components/weather.scss";
 
-.background-rain {
-    background-color: $rain-color;
-}
-
-.background-cloud {
-    background-color: $cloud-color;
-}
-
-.background-sunny {
-    background-color: $sunny-color;
+.is-visible {
+    min-height: 100%;
 }
 </style>
